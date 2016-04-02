@@ -331,7 +331,24 @@ public class Minimax {
         estado1.tiraEn(0,1, false);
         estado1.tiraEn(2,2, false);
 
+        Gato estado2 =  new Gato();
+        estado2.tiraEn(2,1, true);
+        estado2.tiraEn(1,2, true);
+        estado2.tiraEn(0,2, false);
+        estado2.tiraEn(2,0, false);
+        estado2.tiraEn(2,2, false);
+
+        Gato estado3 =  new Gato();
+        estado3.tiraEn(1,0, true);
+        estado3.tiraEn(1,1, true);
+        estado3.tiraEn(2,1, true);
+        estado3.tiraEn(2,0, false);
+        estado3.tiraEn(0,1, false);
+        estado3.tiraEn(2,2, false);
+
         System.out.println(estado1);
+        System.out.println(estado2);
+        System.out.println(estado3);
 
 
 

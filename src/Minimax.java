@@ -333,6 +333,17 @@ public class Minimax {
         return estado;
     }
 
+    public Accion getAccion(Gato previo, Gato siguiente) {
+       for (int i = 0; i < previo.tablero; ++i) {
+           for (int j = 0; j < previo.tablero[i].length; ++j) {
+               if (previo.tablero[i][j] != siguiente.tablero[i][j]) {
+                    return new Accion((siguiente.jugador1 ? 1 : 4), i, j);
+               }
+           }
+       }
+       return new Accion(0,0,0);
+    }
+
     private int asignaValor (Gato estado) {                
         if (estado.tiradas >= 9 || estado.hayGanador) {
             return estado.valor;
@@ -391,18 +402,18 @@ public class Minimax {
         System.out.println("Estado 1");
         System.out.println(estado1);
         System.out.println("Accion");
-        System.out.println(m.decision(estado1));
+        System.out.println(m.getAccion(estado1, m.decision(estado1)));
 
         System.out.println("Estado 2");
         System.out.println(estado2);
         System.out.println("Accion");
-        System.out.println(m.decision(estado2));
+        System.out.println(m.getAccion(estado2, m.decision(estado2)));
 
 
         System.out.println("Estado 3");
         System.out.println(estado3);
         System.out.println("Accion");
-        System.out.println(m.decision(estado3));
+        System.out.println(m.getAccion(estado3, m.decision(estado3)));
 
 
 

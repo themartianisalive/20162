@@ -1,5 +1,6 @@
-import java.util.LinkedList;
+
 import java.util.Hashtable;
+import java.util.LinkedList;
 
 public class Minimax {
     /**
@@ -14,9 +15,10 @@ public class Minimax {
         boolean hayGanador = false;          // Indica si la última tirada produjo un ganador.
         int tiradas = 0;   
         final int MARCA1 = 1;             // Número usado en el tablero del gato para marcar al primer jugador.
-        final int MARCA2 = 4;             // Se usan int en lugar de short porque coincide con el tamaño de la palabra, el código se ejecuta ligeramente más rápido.
+        final int MARCA2 = 4;    
+        boolean maximiza = true;         // Se usan int en lugar de short porque coincide con el tamaño de la palabra, el código se ejecuta ligeramente más rápido.
                   // Número de casillas ocupadas.
-
+        int valor = 0;
         /** Constructor del estado inicial. */
         Gato() {}
 
@@ -68,15 +70,23 @@ public class Minimax {
         * Asume que la casilla está libre.
         * Coloca la marca correspondiente, verifica y asigna la variable si hay un ganador.
         */
-        void tiraEn(int x, int y){
+        void tiraEn(int x, int y) {
+            if (tablero[y][x] != 0)
+                return;
             tiradas++;
+            maximiza = !(tiradas % 2 == 0);
             int marca = (jugador1) ? MARCA1 : MARCA2;
             tablero[y][x] = marca;
             hayGanador(x,y, marca);
+
         }
 
-        void tiraEn(int x, int y, boolean jugador1){
+        void tiraEn(int x, int y, boolean jugador1) {
+            if (tablero[y][x] != 0)
+                return;
+            this.jugador1 = jugador1;
             tiradas++;
+            maximiza = (tiradas%2 == 0);
             int marca = (jugador1) ? MARCA1 : MARCA2;
             tablero[y][x] = marca;
             hayGanador(x,y, marca);
@@ -91,8 +101,6 @@ public class Minimax {
         LinkedList<Gato> generaSucesores() {
             if (hayGanador || tiradas == 9) return null;
 
-            if (tiradas < 5)
-                System.out.println(this);
             Hashtable<Integer, Gato> hw =  new Hashtable<Integer, Gato>();
 
             for (int i = 0; i < 3 ; i++ ) {
@@ -163,6 +171,8 @@ public class Minimax {
             return true;
 
         }
+
+
 
 
         // ------- *** ------- *** -------
@@ -314,14 +324,46 @@ public class Minimax {
         Calcula la decision que se debe tomar en base al 
         en base al algoritmo de Minimax
     */
-    public Accion decision(Gato estado) {
-        return null;
+    public Gato decision(Gato estado) {
+        int v = asignaValor(estado);
+        for (Gato tmp : estado.generaSucesores()) {
+            if (v == tmp.valor)
+                return tmp;
+        }
+        return estado;
     }
+
+    private int asignaValor (Gato estado) {                
+        if (estado.tiradas >= 9 || estado.hayGanador) {
+            return estado.valor;
+        }
+
+        /* es max */
+        if (estado.maximiza) {
+            estado.valor = -1;
+            for (Gato g : estado.generaSucesores()) {
+                estado.valor = (!estado.hayGanador || estado.tiradas >= 9) ? 0 : estado.valor;
+                int v = asignaValor(g);
+                if (estado.valor < v)
+                    estado.valor = v;
+            }
+        } else {
+            estado.valor = 1;
+            for (Gato g : estado.generaSucesores()) {
+                estado.valor = (!estado.hayGanador || estado.tiradas >= 9) ? 0 : estado.valor;
+                int v = asignaValor(g);
+                if (estado.valor > v)
+                    estado.valor = v;
+            }
+        }
+
+        return estado.valor;
+    }
+
 
     public static void main (String[] args) {
         System.out.println("Test minimax");
         Minimax m =  new Minimax();
-
         
         Gato estado1 =  new Gato();
         estado1.tiraEn(1,0, true);
@@ -346,9 +388,21 @@ public class Minimax {
         estado3.tiraEn(2,1, false);
         estado3.tiraEn(1,2, false);
 
+        System.out.println("Estado 1");
         System.out.println(estado1);
+        System.out.println("Accion");
+        System.out.println(m.decision(estado1));
+
+        System.out.println("Estado 2");
         System.out.println(estado2);
+        System.out.println("Accion");
+        System.out.println(m.decision(estado2));
+
+
+        System.out.println("Estado 3");
         System.out.println(estado3);
+        System.out.println("Accion");
+        System.out.println(m.decision(estado3));
 
 
 
